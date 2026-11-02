@@ -20,6 +20,22 @@ fn equal_numbers_on_distinct_authorities_have_a_symmetric_namespace() {
 }
 
 #[test]
+fn adjacent_large_ids_match_the_client_decimal_json_without_rounding() {
+    let first = principal('a', i64::MAX as u64 - 1);
+    let second = principal('a', i64::MAX as u64);
+    let expected = format!(
+        r#"[{{"authority":"{}","user_id":9223372036854775806}},{{"authority":"{}","user_id":9223372036854775807}}]"#,
+        first.authority, second.authority
+    );
+    let chat = format!("principal:{}", URL_SAFE_NO_PAD.encode(expected));
+    assert_eq!(canonical_chat_id(&second, &first), chat);
+    assert_eq!(
+        ConversationPair::from_chat_id(&chat).unwrap(),
+        ConversationPair::new(first, second).unwrap()
+    );
+}
+
+#[test]
 fn principals_reject_unpinned_authorities_and_nonpersistent_ids() {
     for authority in [
         "",
