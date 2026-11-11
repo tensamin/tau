@@ -6,7 +6,7 @@ pub const SCHEMA: &str = "tensamin-account-sync:v1";
 pub const PAGE_LIMIT: usize = 128;
 pub const PAGE_BYTES: usize = 1024 * 1024;
 
-// Account-sync fields have the same assignments across the supported application dictionaries.
+// Stored account-sync records share the same schema across these application dictionaries.
 pub fn dictionaries_compatible(first: &str, second: &str) -> bool {
     let known = |value: &str| {
         ["1.0", "1.1", "1.2", "1.3"]
