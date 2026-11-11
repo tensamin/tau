@@ -33,6 +33,8 @@ const FIELDS: &[(&str, DataType)] = &[
     ("value", DataType::SyncValue),
     ("record", DataType::SyncRecord),
     ("error", DataType::SyncError),
+    ("id", DataType::SyncId),
+    ("offset", DataType::SyncOffset),
 ];
 
 pub(super) fn validate(value: &DataValue, limit: usize) -> Result<(), SyncError> {

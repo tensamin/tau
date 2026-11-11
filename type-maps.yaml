@@ -896,3 +896,5 @@ type_maps:
       SyncValue: 283
       SyncRecord: 284
       SyncError: 285
+      SyncId: 286
+      SyncOffset: 287
