@@ -825,32 +825,14 @@ type_maps:
       InvitationLifetimeSeconds: 197
       Invitations: 198
       InvitationPasswordProtected: 199
-      AppId: 200
-      AuthorizationCode: 201
       SessionToken: 202
-      Scopes: 203
-      Domain: 204
-      RedirectUri: 205
-      RequestSignature: 206
       State: 207
-      PkceChallenge: 208
       ExpiresAt: 209
-      ManifestHash: 210
-      ManifestUrl: 211
-      AppName: 212
-      OwnerCertificate: 213
-      OwnerIotaId: 214
       OmegaUrl: 215
       OmikronUrl: 216
       OmikronPublicKey: 217
-      ConnectionMode: 218
-      Locator: 219
       Json: 220
       Principal: 221
-      CodeVerifier: 222
-      Insecure: 223
-      AuthorizationRequest: 224
-      AppPublicBundle: 226
       AssetId: 227
       UploadId: 228
       Size: 229
