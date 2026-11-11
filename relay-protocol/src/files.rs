@@ -12,6 +12,7 @@ pub const PAGE_SIZE: usize = 64;
 pub struct FileKey {
     pub origin: Principal,
     pub file_id: String,
+    // Immutable encryption context retained for existing ciphertext, not a content revision.
     pub version: i64,
 }
 
@@ -108,10 +109,9 @@ impl ShareRevoke {
 
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct PublishVersion {
+pub struct PublishFile {
     pub manifest: FileManifest,
     pub asset_id: String,
-    pub expected_predecessor: i64,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -170,7 +170,7 @@ pub struct DeleteEntry {
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ListPage {
-    /// `private`, `chat:<canonical chat ID>`, `folders`, `versions`, or `shares`.
+    /// `private`, `chat:<canonical chat ID>`, `folders`, or `shares`.
     pub namespace: String,
     pub folder_id: String,
     pub after: i64,

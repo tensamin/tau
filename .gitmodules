@@ -1,0 +1,3 @@
+[submodule "mtp-type-maps"]
+	path = mtp-type-maps
+	url = https://github.com/tensamin/mtp-type-maps.git
