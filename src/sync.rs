@@ -31,7 +31,7 @@ pub fn encode_request(
 
 pub fn decode_request(frame: &CommunicationValue) -> Result<Request, SyncError> {
     let map = frame.type_map().ok_or(SyncError::InvalidRequest)?;
-    if !matches!(map.version.to_string().as_str(), "1.0" | "1.1")
+    if !matches!(map.version.to_string().as_str(), "1.0" | "1.1" | "1.2")
         || map.fingerprint().is_none()
         || !frame.is_type(CommunicationType::AccountStateRequest)
     {

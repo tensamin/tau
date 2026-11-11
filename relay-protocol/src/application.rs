@@ -10,7 +10,7 @@ impl ApplicationOperation {
         let map = frame
             .type_map()
             .ok_or(crate::Error::Invalid("application dictionary"))?;
-        if !matches!(map.version.to_string().as_str(), "1.0" | "1.1")
+        if !matches!(map.version.to_string().as_str(), "1.0" | "1.1" | "1.2")
             || map.fingerprint_hex().as_deref()
                 != Some(crate::dictionary_fingerprint(&map.version.to_string())?.as_str())
         {

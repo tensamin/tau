@@ -6,11 +6,10 @@ pub const SCHEMA: &str = "tensamin-account-sync:v1";
 pub const PAGE_LIMIT: usize = 128;
 pub const PAGE_BYTES: usize = 1024 * 1024;
 
-/// Dictionary 1.1 only adds file operations. The account-sync JSON schema and
-/// all pre-existing numeric assignments are unchanged.
+// Account-sync fields have the same assignments across the supported application dictionaries.
 pub fn dictionaries_compatible(first: &str, second: &str) -> bool {
     let known = |value: &str| {
-        ["1.0", "1.1"]
+        ["1.0", "1.1", "1.2"]
             .iter()
             .any(|version| dictionary_fingerprint(version).is_ok_and(|hash| hash == value))
     };
@@ -38,7 +37,7 @@ impl Scope {
                 .all(|byte| byte.is_ascii_alphanumeric() || b"-_.:".contains(&byte))
             && self.authorization_generation >= 0
             && self.schema == SCHEMA
-            && ["1.0", "1.1"].iter().any(|version| {
+            && ["1.0", "1.1", "1.2"].iter().any(|version| {
                 dictionary_fingerprint(version).is_ok_and(|value| value == self.dictionary)
             })
     }
