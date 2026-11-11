@@ -1,22 +1,22 @@
 {
-  "dictionary_version": "1.0",
-  "dictionary_fingerprint": "02af6e65ae31d7c2f7d30414b7917e3637705871a8574dfeee834ebd81122450",
-  "schema": "tensamin-account-sync:v1",
-  "request_id": 42,
+  "dictionary_fingerprint": "7b57eeca8f758fdfe8be2e2548a2bcd427014e08491023a03649ba896a2b82c5",
+  "dictionary_version": "1.3",
   "request": {
+    "limit": 128,
     "operation": "snapshot",
+    "page": null,
     "scope": {
+      "authorization_generation": 1,
+      "device_id": "fixture-device",
+      "dictionary": "7b57eeca8f758fdfe8be2e2548a2bcd427014e08491023a03649ba896a2b82c5",
       "principal": {
-        "authority": "omega-key:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authority": "omega-key:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
         "user_id": 42
       },
-      "device_id": "fixture-device",
-      "authorization_generation": 1,
-      "schema": "tensamin-account-sync:v1",
-      "dictionary": "02af6e65ae31d7c2f7d30414b7917e3637705871a8574dfeee834ebd81122450"
-    },
-    "page": null,
-    "limit": 128
+      "schema": "tensamin-account-sync:v1"
+    }
   },
-  "request_mtp_base64": "AAABbQCyAQAAACoJAAEA3AcAAAFceyJvcGVyYXRpb24iOiJzbmFwc2hvdCIsInNjb3BlIjp7InByaW5jaXBhbCI6eyJhdXRob3JpdHkiOiJvbWVnYS1rZXk6YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYSIsInVzZXJfaWQiOjQyfSwiZGV2aWNlX2lkIjoiZml4dHVyZS1kZXZpY2UiLCJhdXRob3JpemF0aW9uX2dlbmVyYXRpb24iOjEsInNjaGVtYSI6InRlbnNhbWluLWFjY291bnQtc3luYzp2MSIsImRpY3Rpb25hcnkiOiIwMmFmNmU2NWFlMzFkN2MyZjdkMzA0MTRiNzkxN2UzNjM3NzA1ODcxYTg1NzRkZmVlZTgzNGViZDgxMTIyNDUwIn0sInBhZ2UiOm51bGwsImxpbWl0IjoxMjh9"
+  "request_id": 42,
+  "request_mtp_base64": "AAABMACyAQAAACoJAAEBAQkABAENBAAAAAAAAAAAAAAAAAAAAIABAwYAAAAIc25hcHNob3QBDP8BBAkABQEJBAAAAAAAAAAAAAAAAAAAAAEBCAYAAAAOZml4dHVyZS1kZXZpY2UBCwYAAABAN2I1N2VlY2E4Zjc1OGZkZmU4YmUyZTI1NDhhMmJjZDQyNzAxNGUwODQ5MTAyM2EwMzY0OWJhODk2YTJiODJjNQEFCQACAQYGAAAASm9tZWdhLWtleTowMTIzNDU2Nzg5YWJjZGVmMDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2Nzg5YWJjZGVmAQcEAAAAAAAAAAAAAAAAAAAAKgEKBgAAABh0ZW5zYW1pbi1hY2NvdW50LXN5bmM6djE=",
+  "schema": "tensamin-account-sync:v1"
 }

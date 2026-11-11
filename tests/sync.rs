@@ -8,13 +8,13 @@ fn scope() -> Scope {
         device_id: "device-a".into(),
         authorization_generation: 1,
         schema: SCHEMA.into(),
-        dictionary: tau::relay_protocol::dictionary_fingerprint("1.0").unwrap(),
+        dictionary: tau::relay_protocol::dictionary_fingerprint("1.3").unwrap(),
     }
 }
 
 #[test]
 fn request_variants_have_exact_response_types_and_scope() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(1, 3));
     let scope = scope();
     let cursor = Cursor {
         scope: scope.clone(),
@@ -82,7 +82,7 @@ fn request_variants_have_exact_response_types_and_scope() {
 
 #[test]
 fn codecs_reject_extra_duplicate_malformed_and_wrong_dictionary_fields() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(1, 3));
     let request = Request::Snapshot {
         scope: scope(),
         page: None,
@@ -105,16 +105,16 @@ fn codecs_reject_extra_duplicate_malformed_and_wrong_dictionary_fields() {
         decode_request(
             &frame
                 .clone()
-                .with_data(DataType::Json, DataValue::Bytes(vec![b'x'; 4097]))
+                .with_data(DataType::SyncPayload, DataValue::Bytes(vec![b'x'; 4097]))
         )
         .is_err()
     );
-    let mut json = serde_json::to_string(&request).unwrap();
-    json.insert_str(1, "\"unexpected\":true,");
-    assert!(
-        decode_request(&frame.with_data(DataType::Json, DataValue::Bytes(json.into_bytes())))
-            .is_err()
-    );
+    let mut payload = frame.get_data(DataType::SyncPayload).unwrap().clone();
+    payload.container_entries_mut().unwrap().push((
+        DataType::Username.try_to_id(&map).unwrap(),
+        DataValue::Bool(true),
+    ));
+    assert!(decode_request(&frame.with_data(DataType::SyncPayload, payload)).is_err());
     assert!(encode_request(&request, &TypeMap::new(mtp::type_map::Version(99, 0)), 9).is_err());
 }
 
@@ -126,7 +126,7 @@ fn backend_golden_request_bytes_are_stable() {
     ))
     .unwrap();
     let request: Request = serde_json::from_value(vector["request"].clone()).unwrap();
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(1, 3));
     assert_eq!(
         map.fingerprint_hex().as_deref(),
         vector["dictionary_fingerprint"].as_str()

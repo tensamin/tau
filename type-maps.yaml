@@ -1,4 +1,4 @@
-protocol_version: "1.2"
+protocol_version: "1.3"
 
 type_maps:
   "1.0":
@@ -453,7 +453,7 @@ type_maps:
     DataTypes: *data_v1
 
   "1.2":
-    CommunicationTypes:
+    CommunicationTypes: &communication_v12
       ProtectedMessage: 32
       ErrorProtocol: 33
       ErrorAnonymous: 34
@@ -667,7 +667,7 @@ type_maps:
       FileMetadataPut: 257
       FileReplicaReadResponse: 258
       FileUploadStart: 259
-    DataTypes:
+    DataTypes: &data_v12
       ErrorType: 32
       ErrorProtocol: 33
       AcceptedIds: 34
@@ -862,3 +862,37 @@ type_maps:
       ReceiptSequence: 254
       ReceiptAcceptedAt: 255
       CallPayload: 256
+
+  "1.3":
+    CommunicationTypes: *communication_v12
+    DataTypes:
+      <<: *data_v12
+      SyncPayload: 257
+      SyncEntries: 258
+      SyncOperation: 259
+      SyncScope: 260
+      SyncPrincipal: 261
+      SyncAuthority: 262
+      SyncUserId: 263
+      SyncDeviceId: 264
+      SyncAuthorizationGeneration: 265
+      SyncSchema: 266
+      SyncDictionary: 267
+      SyncPage: 268
+      SyncLimit: 269
+      SyncAfter: 270
+      SyncCursor: 271
+      SyncPageId: 272
+      SyncState: 273
+      SyncHead: 274
+      SyncFloor: 275
+      SyncNext: 276
+      SyncRecords: 277
+      SyncEvents: 278
+      SyncSequence: 279
+      SyncEventId: 280
+      SyncEntity: 281
+      SyncKey: 282
+      SyncValue: 283
+      SyncRecord: 284
+      SyncError: 285

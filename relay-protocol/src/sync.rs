@@ -9,7 +9,7 @@ pub const PAGE_BYTES: usize = 1024 * 1024;
 // Account-sync fields have the same assignments across the supported application dictionaries.
 pub fn dictionaries_compatible(first: &str, second: &str) -> bool {
     let known = |value: &str| {
-        ["1.0", "1.1", "1.2"]
+        ["1.0", "1.1", "1.2", "1.3"]
             .iter()
             .any(|version| dictionary_fingerprint(version).is_ok_and(|hash| hash == value))
     };
@@ -37,7 +37,7 @@ impl Scope {
                 .all(|byte| byte.is_ascii_alphanumeric() || b"-_.:".contains(&byte))
             && self.authorization_generation >= 0
             && self.schema == SCHEMA
-            && ["1.0", "1.1", "1.2"].iter().any(|version| {
+            && ["1.0", "1.1", "1.2", "1.3"].iter().any(|version| {
                 dictionary_fingerprint(version).is_ok_and(|value| value == self.dictionary)
             })
     }
