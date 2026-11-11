@@ -80,15 +80,9 @@ pub fn encode_response(
     )
 }
 
-pub fn decode_response(
-    frame: &CommunicationValue,
-    request: &CommunicationValue,
-) -> Result<Response, SyncError> {
-    let expected = decode_request(request)?;
-    if frame.id() != request.id()
-        || frame.type_map() != request.type_map()
-        || !frame.is_type(CommunicationType::AccountStateSnapshot)
-    {
+// Decode the bounded body; callers still own request correlation and scope validation.
+pub fn decode_response_body(frame: &CommunicationValue) -> Result<Response, SyncError> {
+    if !frame.is_type(CommunicationType::AccountStateSnapshot) {
         return Err(SyncError::InvalidRequest);
     }
     let map = frame.type_map().ok_or(SyncError::InvalidRequest)?;
@@ -103,8 +97,18 @@ pub fn decode_response(
         return Err(SyncError::InvalidRequest);
     }
     wire::validate(value, PAGE_BYTES)?;
-    let response: Response =
-        serde_json::from_value(wire::decode(value, map)?).map_err(|_| SyncError::InvalidRequest)?;
+    serde_json::from_value(wire::decode(value, map)?).map_err(|_| SyncError::InvalidRequest)
+}
+
+pub fn decode_response(
+    frame: &CommunicationValue,
+    request: &CommunicationValue,
+) -> Result<Response, SyncError> {
+    let expected = decode_request(request)?;
+    if frame.id() != request.id() || frame.type_map() != request.type_map() {
+        return Err(SyncError::InvalidRequest);
+    }
+    let response = decode_response_body(frame)?;
     let valid = match (&response, &expected) {
         (Response::Unavailable { .. }, _) => true,
         (
