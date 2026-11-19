@@ -6,14 +6,13 @@ pub const SCHEMA: &str = "tensamin-account-sync:v1";
 pub const PAGE_LIMIT: usize = 128;
 pub const PAGE_BYTES: usize = 1024 * 1024;
 
-// Stored account-sync records share the same schema across these application dictionaries.
+// Stored account-sync records are only valid for the current application dictionary.
 pub fn dictionaries_compatible(first: &str, second: &str) -> bool {
-    let known = |value: &str| {
-        ["1.0", "1.1", "1.2", "1.3"]
-            .iter()
-            .any(|version| dictionary_fingerprint(version).is_ok_and(|hash| hash == value))
-    };
-    known(first) && known(second)
+    first == second && current_dictionary(first)
+}
+
+fn current_dictionary(value: &str) -> bool {
+    dictionary_fingerprint(crate::PROTECTED_TYPE_MAP_VERSION).is_ok_and(|hash| hash == value)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -37,9 +36,7 @@ impl Scope {
                 .all(|byte| byte.is_ascii_alphanumeric() || b"-_.:".contains(&byte))
             && self.authorization_generation >= 0
             && self.schema == SCHEMA
-            && ["1.0", "1.1", "1.2", "1.3"].iter().any(|version| {
-                dictionary_fingerprint(version).is_ok_and(|value| value == self.dictionary)
-            })
+            && current_dictionary(&self.dictionary)
     }
 }
 

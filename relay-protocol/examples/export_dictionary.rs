@@ -3,10 +3,10 @@ use base64::{Engine as _, engine::general_purpose::STANDARD};
 use mtp::type_map::{TypeMap, Version};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let map = TypeMap::new(Version(1, 0));
+    let map = TypeMap::new(Version(0, 4));
     let bytes = map
         .dictionary_bytes()
-        .ok_or("backend dictionary 1.0 is not compiled in")?;
+        .ok_or("backend dictionary 0.4 is not compiled in")?;
     let sync_scope = tau_relay_protocol::sync::Scope {
         principal: tau_relay_protocol::Principal::new(format!("omega-key:{}", "a".repeat(64)), 42)?,
         device_id: "fixture-device".into(),
@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!(
         "{}",
         serde_json::to_string_pretty(&serde_json::json!({
-            "version": "1.0",
+            "version": "0.4",
             "fingerprint_algorithm": "sha256",
             "serialization": "mtp-type-dictionary-v1",
             "fingerprint": map.fingerprint_hex().ok_or("missing dictionary fingerprint")?,

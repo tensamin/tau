@@ -33,7 +33,7 @@ pub fn encode_request(
 
 pub fn decode_request(frame: &CommunicationValue) -> Result<Request, SyncError> {
     let map = frame.type_map().ok_or(SyncError::InvalidRequest)?;
-    if map.version.to_string() != "1.3"
+    if map.version.to_string() != tau_relay_protocol::PROTECTED_TYPE_MAP_VERSION
         || map.fingerprint().is_none()
         || !frame.is_type(CommunicationType::AccountStateRequest)
     {

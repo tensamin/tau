@@ -13,7 +13,7 @@ pub const SIGNING_DOMAIN: &[u8] = b"tensamin-federated-relay\0";
 pub const RELAY_CONTENT_SIGNATURE: ProtectionPurpose = ProtectionPurpose(0x31);
 pub const RELAY_CONTENT_ENCRYPTION: ProtectionPurpose = ProtectionPurpose(0x32);
 /// Fixed map for the encrypted ProtectedMessage, independent of the signed application map.
-pub const PROTECTED_TYPE_MAP_VERSION: &str = "1.0";
+pub const PROTECTED_TYPE_MAP_VERSION: &str = "0.4";
 /// Application map selected by MTP's default producers, including the SDK frame builder.
 pub const DEFAULT_APPLICATION_TYPE_MAP_VERSION: mtp::type_map::Version =
     mtp::codec::PROTOCOL_VERSION;

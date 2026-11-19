@@ -3,7 +3,7 @@ use tau::password::Failure;
 
 #[test]
 fn password_failures_have_one_machine_readable_class_and_retry_policy() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(0, 4));
     for failure in [
         Failure::InvalidRequest,
         Failure::Unauthorized,
