@@ -131,7 +131,7 @@ pub struct RecoveryReply {
 }
 
 pub fn request_frame(request: &RecoveryRequest) -> Result<CommunicationValue, RecoveryError> {
-    request_frame_with_type_map(request, &TypeMap::new(mtp::type_map::Version(1, 0)))
+    request_frame_with_type_map(request, &TypeMap::new(mtp::type_map::Version(0, 4)))
 }
 
 pub fn request_frame_with_type_map(
@@ -338,7 +338,7 @@ mod tests {
 
     #[test]
     fn recovery_extension_keeps_legacy_wire_ids_unchanged() {
-        let map = mtp::type_map::TypeMap::new(mtp::type_map::Version::new(1, 0));
+        let map = mtp::type_map::TypeMap::new(mtp::type_map::Version::new(0, 4));
         for (kind, id) in [
             (CommunicationType::SetChatSecret, 131),
             (CommunicationType::GetChatSecret, 132),

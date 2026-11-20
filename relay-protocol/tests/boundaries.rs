@@ -830,12 +830,12 @@ fn signed_declared_application_map_never_falls_back_to_latest() {
     let sender = Keyring::generate();
     let recipient = Keyring::generate();
     let mut wire = sign(app(DataValue::Null), &sender, &recipient);
-    wire.type_map_version = "1.0".into();
+    wire.type_map_version = "0.4".into();
     assert!(
         wire.validate().is_err(),
         "a version label cannot substitute another dictionary"
     );
-    wire.type_map_fingerprint = dictionary_fingerprint("1.0").unwrap();
+    wire.type_map_fingerprint = dictionary_fingerprint("0.4").unwrap();
     let signing = DualSigner::new(
         &sender.sig_cl_secret_key,
         &sender.sig_pq_secret_key,
@@ -854,7 +854,7 @@ fn signed_declared_application_map_never_falls_back_to_latest() {
         verify_and_open(&json, &[sender.public_key_bundle()], &recipient, None, None).unwrap();
     assert_eq!(
         opened.application.type_map().unwrap().version.to_string(),
-        "1.0"
+        "0.4"
     );
     assert!(!opened.application.is_type(CommunicationType::MessageSend));
 }

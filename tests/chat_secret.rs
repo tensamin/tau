@@ -16,7 +16,7 @@ fn request() -> ReadRequest {
 
 #[test]
 fn latest_and_named_epoch_reads_round_trip_with_canonical_scope() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(0, 4));
     for epoch in [None, Some(SecretEpoch::try_from(3).unwrap())] {
         let mut request = request();
         request.epoch = epoch;
@@ -28,7 +28,7 @@ fn latest_and_named_epoch_reads_round_trip_with_canonical_scope() {
 
 #[test]
 fn committed_envelopes_round_trip_and_bind_owner_epoch_routing_and_correlation() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(0, 4));
     for requested_epoch in [None, Some(SecretEpoch::try_from(3).unwrap())] {
         let mut scope = request();
         scope.epoch = requested_epoch;
@@ -96,7 +96,7 @@ fn committed_envelopes_round_trip_and_bind_owner_epoch_routing_and_correlation()
 
 #[test]
 fn read_decoders_reject_aliases_extra_fields_and_invalid_epochs() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(0, 4));
     let frame = request().to_frame(&map, 42).unwrap();
     for invalid in [
         frame
@@ -140,7 +140,7 @@ fn read_decoders_reject_aliases_extra_fields_and_invalid_epochs() {
 
 #[test]
 fn unavailable_states_are_exact_correlated_outcomes_not_generic_success() {
-    let map = TypeMap::new(mtp::type_map::Version(1, 0));
+    let map = TypeMap::new(mtp::type_map::Version(0, 4));
     let request = request().to_frame(&map, 42).unwrap().with_sender(7);
     for state in [
         ReadUnavailable::NoSuchConversation,

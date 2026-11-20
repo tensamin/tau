@@ -10,17 +10,23 @@ impl ApplicationOperation {
         let map = frame
             .type_map()
             .ok_or(crate::Error::Invalid("application dictionary"))?;
-        if !matches!(
-            map.version.to_string().as_str(),
-            "1.0" | "1.1" | "1.2" | "1.3"
-        ) || map.fingerprint_hex().as_deref()
+        if map.version.to_string() != crate::PROTECTED_TYPE_MAP_VERSION
+            || map.fingerprint_hex().as_deref()
             != Some(crate::dictionary_fingerprint(&map.version.to_string())?.as_str())
         {
             return Err(crate::Error::Invalid("application dictionary"));
         }
         let allowed: &[&str] = match map.communication_type_name(frame.get_type().0) {
-            Some("MessageSend") => &["Content", "SendTime", "Height", "VersionNumber", "ReplyId"],
-            Some("MessageEdit") => &["Content", "SendTime", "VersionNumber"],
+            Some("MessageSend") => &[
+                "Content",
+                "Files",
+                "SendTime",
+                "Height",
+                "VersionNumber",
+                "ReplyId",
+            ],
+            Some("MessageEdit") => &["Content", "Files", "SendTime", "VersionNumber"],
+            Some("MessageFilesUpdate") => &["Files", "SendTime"],
             Some("MessageReactionAdd" | "MessageReactionRemove") => &["Reaction", "SendTime"],
             Some("MessageDelete" | "MessageDeleteLive") => &["SendTime"],
             Some("MessageState") => &["ChatPartnerId", "MessageState", "RelayMessageId", "EventAt"],
@@ -60,16 +66,22 @@ pub enum ApplicationOperation {
         revoke: crate::files::ShareRevoke,
     },
     MessageSend {
-        content: String,
+        content: Option<String>,
+        files: Vec<MessageFile>,
         send_time: i64,
         height: i64,
         version: i64,
         reply_to: Option<i64>,
     },
     MessageEdit {
-        content: String,
+        content: Option<String>,
+        files: Vec<MessageFile>,
         send_time: i64,
         version: i64,
+    },
+    MessageFilesUpdate {
+        files: Vec<MessageFile>,
+        send_time: i64,
     },
     MessageReactionAdd {
         reaction: String,
@@ -155,4 +167,21 @@ impl MessageState {
             Self::Sending
         }
     }
+}
+
+/// A message attachment. `reference` is encrypted with the chat secret; only `status` may change without an edit.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MessageFile {
+    pub reference: String,
+    pub status: Option<FileStatus>,
+}
+
+/// Upload state of an attachment; no status means the file is ready.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum FileStatus {
+    Uploading,
+    Cancelled,
+    Failed,
 }
