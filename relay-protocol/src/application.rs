@@ -12,7 +12,7 @@ impl ApplicationOperation {
             .ok_or(crate::Error::Invalid("application dictionary"))?;
         if map.version.to_string() != crate::PROTECTED_TYPE_MAP_VERSION
             || map.fingerprint_hex().as_deref()
-            != Some(crate::dictionary_fingerprint(&map.version.to_string())?.as_str())
+                != Some(crate::dictionary_fingerprint(&map.version.to_string())?.as_str())
         {
             return Err(crate::Error::Invalid("application dictionary"));
         }
@@ -66,7 +66,8 @@ pub enum ApplicationOperation {
         revoke: crate::files::ShareRevoke,
     },
     MessageSend {
-        content: Option<String>,
+        #[serde(with = "optional_base64_bytes")]
+        content: Option<Vec<u8>>,
         files: Vec<MessageFile>,
         send_time: i64,
         height: i64,
@@ -74,7 +75,8 @@ pub enum ApplicationOperation {
         reply_to: Option<i64>,
     },
     MessageEdit {
-        content: Option<String>,
+        #[serde(with = "optional_base64_bytes")]
+        content: Option<Vec<u8>>,
         files: Vec<MessageFile>,
         send_time: i64,
         version: i64,
@@ -173,7 +175,8 @@ impl MessageState {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct MessageFile {
-    pub reference: String,
+    #[serde(with = "base64_bytes")]
+    pub reference: Vec<u8>,
     pub status: Option<FileStatus>,
 }
 
@@ -184,4 +187,77 @@ pub enum FileStatus {
     Uploading,
     Cancelled,
     Failed,
+}
+
+/// JSON cannot carry raw bytes, so persisted JSON documents store ciphertext as base64.
+pub mod base64_bytes {
+    use base64::{Engine as _, engine::general_purpose::STANDARD};
+    use serde::{Deserialize, Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&STANDARD.encode(bytes))
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<u8>, D::Error> {
+        let encoded = String::deserialize(deserializer)?;
+        STANDARD.decode(encoded).map_err(serde::de::Error::custom)
+    }
+}
+
+pub mod optional_base64_bytes {
+    use serde::{Deserialize, Deserializer, Serializer};
+
+    pub fn serialize<S: Serializer>(
+        bytes: &Option<Vec<u8>>,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error> {
+        match bytes {
+            Some(bytes) => super::base64_bytes::serialize(bytes, serializer),
+            None => serializer.serialize_none(),
+        }
+    }
+
+    pub fn deserialize<'de, D: Deserializer<'de>>(
+        deserializer: D,
+    ) -> Result<Option<Vec<u8>>, D::Error> {
+        #[derive(Deserialize)]
+        struct Wrapped(#[serde(with = "super::base64_bytes")] Vec<u8>);
+        Ok(Option::<Wrapped>::deserialize(deserializer)?.map(|Wrapped(bytes)| bytes))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn persisted_ciphertext_round_trips_as_base64() {
+        let operation = ApplicationOperation::MessageEdit {
+            content: Some(vec![0, 255, 7]),
+            files: vec![MessageFile {
+                reference: vec![1, 2, 3],
+                status: None,
+            }],
+            send_time: 1,
+            version: 2,
+        };
+        let json = serde_json::to_value(&operation).unwrap();
+        assert_eq!(json["MessageEdit"]["content"], "AP8H");
+        assert_eq!(json["MessageEdit"]["files"][0]["reference"], "AQID");
+
+        let decoded: ApplicationOperation = serde_json::from_value(json).unwrap();
+        assert!(matches!(
+            decoded,
+            ApplicationOperation::MessageEdit { content: Some(content), .. } if content == [0, 255, 7]
+        ));
+
+        let empty: ApplicationOperation = serde_json::from_value(serde_json::json!({
+            "MessageEdit": {"content": null, "files": [], "send_time": 1, "version": 1}
+        }))
+        .unwrap();
+        assert!(matches!(
+            empty,
+            ApplicationOperation::MessageEdit { content: None, .. }
+        ));
+    }
 }
